@@ -32,6 +32,7 @@ wsServer.on('request', function (request) {
   var connection = request.accept(null, request.origin);
   //sent to browser
   ptyProcess.on('data', function (data) {
+    console.log('on data', data)
     connection.send(data);
   });
   //receive message from browser
