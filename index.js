@@ -44,7 +44,7 @@ wsServer.on('request', function (request) {
       if (err) throw err;
       stream.on('close', function () {
         console.log('Stream :: close');
-        conn.end();
+        connection.close()
       }).on('data', function (data) {
         console.log('OUTPUT: ' + data);
         connection.sendUTF(data)
