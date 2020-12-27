@@ -24,46 +24,58 @@ wsServer.on('request', function (request) {
   
   
   var connection = request.accept(null, request.origin);
-  // ptyProcess.on('data', function (data) {
-  //   connection.sendUTF(data);
-  // });
-  conn.on('ready', function () {
-    console.log('Client :: ready');
-    conn.shell(function (err, stream) {
-      connection.on('message', function (message) {
-        if (message.type === 'utf8') {
-          console.log('Received Message: ' + message.utf8Data);
-          stream.write(message.utf8Data)
-        }
-        else if (message.type === 'binary') {
-          console.log('Received Binary Message of ' + message.binaryData.length + ' bytes');
-          stream.write(message.binaryData);
-        }
+  //sent to browser
+  ptyProcess.on('data', function (data) {
+    connection.sendUTF(data);
+  });
+  //receive message from browser
+  connection.on('message', function (message) {
+    if (message.type === 'utf8') {
+      console.log('Received Message: ' + message.utf8Data);
+      ptyProcess.write(message.utf8Data)
+    }
+    else if (message.type === 'binary') {
+      console.log('Received Binary Message of ' + message.binaryData.length + ' bytes');
+      ptyProcess.write(message.binaryData);
+    }
+  // conn.on('ready', function () {
+  //   console.log('Client :: ready');
+  //   conn.shell(function (err, stream) {
+  //     connection.on('message', function (message) {
+  //       if (message.type === 'utf8') {
+  //         console.log('Received Message: ' + message.utf8Data);
+  //         stream.write(message.utf8Data)
+  //       }
+  //       else if (message.type === 'binary') {
+  //         console.log('Received Binary Message of ' + message.binaryData.length + ' bytes');
+  //         stream.write(message.binaryData);
+  //       }
     
-      });
-      if (err) throw err;
-      stream.on('close', function () {
-        console.log('Stream :: close');
-        connection.close()
-      }).on('data', function (data) {
-        console.log('OUTPUT: ' + data);
-        connection.sendUTF(data)
-      });
-      // stream.end('ls -l\nexit\n');
-    });
-  })
+  //     });
+  //     if (err) throw err;
+  //     stream.on('close', function () {
+  //       console.log('Stream :: close');
+  //       connection.close()
+  //     }).on('data', function (data) {
+  //       console.log('OUTPUT: ' + data);
+  //       connection.sendUTF(data)
+  //     });
+  //     // stream.end('ls -l\nexit\n');
+  //   });
+  // })
   
-  connection.on('close', function (reasonCode, description) {
-    console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected.');
-    // ptyProcess.kill()
-    conn.end();
-  });
-  conn.connect({
-    host: 'localhost',
-    port: 22,
-    username: 'manjaro',
-    password: 'manjaro'
-  });
+  
+  // conn.connect({
+  //   host: 'localhost',
+  //   port: 22,
+  //   username: 'manjaro',
+  //   password: 'manjaro'
+});
+
+connection.on('close', function (reasonCode, description) {
+  console.log((new Date()) + ' Peer ' + connection.remoteAddress + ' disconnected.');
+  ptyProcess.kill()
+  // conn.end();
 });
 
 
@@ -102,4 +114,4 @@ wsServer.on('request', function (request) {
 //     }
 //     // write the key to stdout all normal like
 //     ptyProcess.write( key );
-// });
+});
