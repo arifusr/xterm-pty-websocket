@@ -15,7 +15,7 @@ ptyProcess.on('data', function(data) {
   process.stdout.write(data);
 });
 var stdin = process.stdin;
-console.log(process)
+console.log(stdin)
 
 // without this, we would only get streams once enter is pressed
 stdin.setRawMode( true );
