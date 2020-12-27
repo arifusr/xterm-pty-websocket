@@ -16,11 +16,17 @@ server.listen(process.env.PORT || 8080, function () {
 wsServer = new WebSocketServer({
   httpServer: server,
 });
-let ptyProcess
+var ptyProcess = pty.spawn(shell, [], {
+  name: 'xterm-color',
+  cols: 80,
+  rows: 30,
+  cwd: process.env.HOME,
+  env: process.env
+});
 wsServer.on('request', function (request) {
-  var Client = require('ssh2').Client;
+  // var Client = require('ssh2').Client;
 
-  var conn = new Client();
+  // var conn = new Client();
   
   
   var connection = request.accept(null, request.origin);
